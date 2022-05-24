@@ -1,0 +1,51 @@
+version: '3'
+
+services:
+
+  ball_rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'ball_rabbitmq'
+    restart: on-failure
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - "./.config/rabbitmq/:/etc/ball/amqp/"
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=@dministrat0r!
+
+  supplier_management_db:
+    image: postgres:14-alpine
+    container_name: 'supplier_management_db'
+    restart: on-failure
+    ports:
+      - '5432:5432'
+    volumes:
+      - supplier_management_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=@dministrat0r!
+      - POSTGRES_DB=supplier
+
+  supplier_management_service:
+    image: ball/supplier_management_service:1.0
+    build: supplier-management
+    restart: on-failure
+    ports:
+      - '3000:3000'
+    environment:
+      - POSTGRES_HOST=supplier_management_db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=@dministrat0r!
+      - POSTGRES_DB=supplier
+      - MQ_URL=amqp://admin:%40dministrat0r%21@ball_rabbitmq:5672
+    depends_on:
+      - ball_rabbitmq
+      - supplier_management_db
+
+volumes:
+  supplier_management_data:
+  rabbitmq_data:
