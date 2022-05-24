@@ -11,7 +11,9 @@ export class SupplierService {
     ) {}
 
     findAll(): Promise<Supplier[]> {
-        return this.supplierRepository.find()
+        return this.supplierRepository.find({
+            isActive: true
+        })
     }
 
     findOne(id: string): Promise<Supplier | undefined> {
@@ -20,5 +22,11 @@ export class SupplierService {
 
     create(supplier: Supplier): Promise<Supplier> {
         return this.supplierRepository.save(supplier)
+    }
+
+    async update(id: string, supplier: Partial<Supplier>): Promise<Partial<Supplier>> {
+        supplier.id = id
+        await this.supplierRepository.update({ id }, supplier)
+        return supplier
     }
 }
