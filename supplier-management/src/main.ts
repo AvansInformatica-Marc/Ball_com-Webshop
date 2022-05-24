@@ -5,24 +5,17 @@ import * as compression from 'compression'
 import helmet from 'helmet'
 import { Transport } from '@nestjs/microservices'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
+import { supplierMqOptions, validationOptions } from './app.constants'
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule)
 
     app.connectMicroservice({
         transport: Transport.RMQ,
-        options: {
-            urls: [process.env["MQ_URL"]],
-            queue: 'suppliers',
-            queueOptions: {
-                durable: false
-            }
-        },
+        options: supplierMqOptions,
     })
 
-    app.useGlobalPipes(new ValidationPipe({
-        transform: true
-    }))
+    app.useGlobalPipes(new ValidationPipe(validationOptions))
 
     app.enableVersioning({
         type: VersioningType.URI,

@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger"
-import { IsBoolean, IsDateString, IsOptional, IsString, IsUUID } from "class-validator"
+import { IsBoolean, IsDateString, IsNotEmpty, IsOptional, IsString, IsUUID } from "class-validator"
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm"
 
 @Entity()
@@ -11,6 +11,7 @@ export class SupplierEvent {
 
     @Column()
     @IsString()
+    @IsNotEmpty()
     @ApiProperty()
     eventName: string
 
@@ -32,6 +33,18 @@ export class SupplierEvent {
     @IsOptional()
     @ApiPropertyOptional()
     name?: string
+
+    @Column({ nullable: true })
+    @IsString()
+    @IsOptional()
+    @ApiPropertyOptional()
+    address?: string
+
+    @Column({ nullable: true })
+    @IsString()
+    @IsOptional()
+    @ApiPropertyOptional()
+    city?: string
 
     @Column({ default: true })
     @IsBoolean()

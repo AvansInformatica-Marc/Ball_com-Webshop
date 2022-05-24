@@ -7,12 +7,22 @@ export class Supplier {
     @IsUUID()
     @ApiProperty()
     @PrimaryGeneratedColumn("uuid")
-    id: string
+    supplierId: string
 
     @IsString()
     @ApiProperty()
     @Column()
     name: string
+
+    @IsString()
+    @ApiProperty()
+    @Column()
+    address: string
+
+    @IsString()
+    @ApiProperty()
+    @Column()
+    city: string
 
     @IsBoolean()
     @ApiProperty()

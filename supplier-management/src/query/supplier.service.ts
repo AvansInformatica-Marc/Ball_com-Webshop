@@ -16,17 +16,17 @@ export class SupplierService {
         })
     }
 
-    findOne(id: string): Promise<Supplier | undefined> {
-        return this.supplierRepository.findOne(id)
+    findOne(supplierId: string): Promise<Supplier | undefined> {
+        return this.supplierRepository.findOne(supplierId)
     }
 
     create(supplier: Supplier): Promise<Supplier> {
         return this.supplierRepository.save(supplier)
     }
 
-    async update(id: string, supplier: Partial<Supplier>): Promise<Partial<Supplier>> {
-        supplier.id = id
-        await this.supplierRepository.update({ id }, supplier)
+    async update(supplierId: string, supplier: Partial<Supplier>): Promise<Partial<Supplier>> {
+        supplier.supplierId = supplierId
+        await this.supplierRepository.update({ supplierId }, supplier)
         return supplier
     }
 }

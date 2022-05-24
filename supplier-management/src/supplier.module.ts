@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { ClientsModule, Transport } from '@nestjs/microservices'
 import { TypeOrmModule } from '@nestjs/typeorm'
+import { supplierMqOptions } from './app.constants'
 import { SupplierCommandController } from './command/supplier-command.controller'
 import { SupplierEvent } from './command/supplier-event.entity'
 import { SupplierEventService } from './command/supplier-event.service'
@@ -15,13 +16,7 @@ import { SupplierService } from './query/supplier.service'
             {
                 name: "SUPPLIER_SERVICE",
                 transport: Transport.RMQ,
-                options: {
-                    urls: [process.env["MQ_URL"]!],
-                    queue: 'suppliers',
-                    queueOptions: {
-                        durable: false
-                    }
-                },
+                options: supplierMqOptions,
             }
         ]),
         TypeOrmModule.forFeature([Supplier, SupplierEvent])
