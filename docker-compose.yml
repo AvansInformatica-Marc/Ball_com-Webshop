@@ -21,8 +21,6 @@ services:
     image: postgres:14-alpine
     container_name: 'supplier_management_db'
     restart: on-failure
-    ports:
-      - '5432:5432'
     volumes:
       - supplier_management_data:/var/lib/postgresql/data
     environment:
@@ -53,8 +51,6 @@ services:
     image: postgres:14-alpine
     container_name: 'product_management_db'
     restart: on-failure
-    ports:
-      - '5433:5432'
     volumes:
       - product_management_data:/var/lib/postgresql/data
     environment:
@@ -80,7 +76,38 @@ services:
       - ball_rabbitmq
       - product_management_db
 
+  ### CUSTOMERS ###
+  customer_management_db:
+    image: postgres:14-alpine
+    container_name: 'customer_management_db'
+    restart: on-failure
+    volumes:
+      - customer_management_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=@dministrat0r!
+      - POSTGRES_DB=customer
+
+  customer_management_service:
+    image: ball/customer_management_service:1.0
+    build: customer-management
+    restart: on-failure
+    ports:
+      - '3200:3000'
+    environment:
+      - POSTGRES_HOST=customer_management_db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=@dministrat0r!
+      - POSTGRES_DB=customer
+      - MQ_URL=amqp://admin:%40dministrat0r%21@ball_rabbitmq:5672
+      - MQ_EXCHANGE=ball
+    depends_on:
+      - ball_rabbitmq
+      - customer_management_db
+
 volumes:
   supplier_management_data:
   product_management_data:
+  customer_management_data:
   rabbitmq_data:
