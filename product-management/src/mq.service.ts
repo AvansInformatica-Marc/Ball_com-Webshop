@@ -1,14 +1,14 @@
 import { RabbitSubscribe } from "@golevelup/nestjs-rabbitmq";
 import { Injectable } from "@nestjs/common";
 import { validate } from "class-validator";
-import { validationOptions } from "./app.constants";
-import { Event } from "./command/event.entity";
-import { ProductEvent } from "./command/product-event.entity";
-import { SupplierEvent } from "./command/supplier-event.entity";
+import { constructFromObjects, MQ_EXCHANGE, MQ_ROUTING_KEY, validationOptions } from "./app.constants";
+import { Event } from "./command/db/event.entity";
+import { ProductEvent } from "./command/db/product-event.entity";
+import { SupplierEvent } from "./command/db/supplier-event.entity";
 import { Product } from "./query/product.entity";
-import { ProductService } from "./query/product.service";
+import { ProductService } from "./query/db/product.service";
 import { Supplier } from "./query/supplier.entity";
-import { SupplierService } from "./query/supplier.service";
+import { SupplierService } from "./query/db/supplier.service";
 
 @Injectable()
 export class MqService {
@@ -18,80 +18,65 @@ export class MqService {
     ) {}
 
     @RabbitSubscribe({
-        exchange: 'ball',
-        routingKey: '',
+        exchange: MQ_EXCHANGE,
+        routingKey: MQ_ROUTING_KEY,
         queue: 'product',
     })
     async onMessage(message: { event: Event, [key: string]: any }) {
         switch (message.event.eventName) {
             case "SupplierCreated": {
-                const event = new SupplierEvent()
-                Object.assign(event, message)
-                validate(event, validationOptions)
-                await this.onSupplierCreated(event)
+                await this.onSupplierCreated(this.createSupplierEventFromMessage(message))
                 break
             }
             case "SupplierUpdated": {
-                const event = new SupplierEvent()
-                Object.assign(event, message)
-                validate(event, validationOptions)
-                await this.onSupplierUpdated(event)
+                await this.onSupplierUpdated(this.createSupplierEventFromMessage(message))
                 break
             }
             case "SupplierDeleted": {
-                const event = new SupplierEvent()
-                Object.assign(event, message)
-                validate(event, validationOptions)
-                await this.onSupplierRemoved(event)
+                await this.onSupplierRemoved(this.createSupplierEventFromMessage(message))
                 break
             }
             case "ProductCreated": {
-                const event = new ProductEvent()
-                Object.assign(event, message)
-                validate(event, validationOptions)
-                await this.onProductCreated(event)
+                await this.onProductCreated(this.createProductEventFromMessage(message))
                 break
             }
             case "ProductUpdated": {
-                const event = new ProductEvent()
-                Object.assign(event, message)
-                validate(event, validationOptions)
-                await this.onProductUpdated(event)
+                await this.onProductUpdated(this.createProductEventFromMessage(message))
                 break
             }
             case "ProductDeleted": {
-                const event = new ProductEvent()
-                Object.assign(event, message)
-                validate(event, validationOptions)
-                await this.onProductRemoved(event)
+                await this.onProductRemoved(this.createProductEventFromMessage(message))
                 break
             }
         }
     }
 
+    private createSupplierEventFromMessage(message: { [key: string]: any }): SupplierEvent {
+        return constructFromObjects(SupplierEvent, message)
+    }
+
+    private createProductEventFromMessage(message: { [key: string]: any }): ProductEvent {
+        return constructFromObjects(ProductEvent, message)
+    }
+
     async onSupplierCreated(supplierEvent: SupplierEvent) {
-        const supplier = new Supplier()
-        Object.assign(supplier, supplierEvent)
-        validate(supplier, validationOptions)
+        const supplier = constructFromObjects(Supplier, supplierEvent)
         await this.supplierService.create(supplier)
     }
 
     async onSupplierUpdated(supplierEvent: SupplierEvent) {
-        const supplier = new Supplier()
-        Object.assign(supplier, supplierEvent)
-        validate(supplier, validationOptions)
+        const supplier = constructFromObjects(Supplier, supplierEvent)
         await this.supplierService.update(supplierEvent.supplierId, supplier)
     }
 
     async onSupplierRemoved(supplierEvent: SupplierEvent) {
+        await this.productService.deleteAllFromSupplier(supplierEvent.supplierId)
         await this.supplierService.delete(supplierEvent.supplierId)
     }
 
     async onProductCreated(productEvent: ProductEvent) {
-        const product = new Product()
         const supplier = await this.supplierService.findOne(productEvent.supplierId!)
-        Object.assign(product, productEvent, { supplier })
-        validate(product, validationOptions)
+        const product = constructFromObjects(Product, productEvent, { supplier })
         await this.productService.create(product)
     }
 

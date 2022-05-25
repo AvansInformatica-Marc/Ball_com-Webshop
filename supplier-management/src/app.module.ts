@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { SupplierEvent } from './command/supplier-event.entity'
+import { SupplierEvent } from './command/db/supplier-event.entity'
 import { Supplier } from './query/supplier.entity'
 import { SupplierModule } from './supplier.module'
 

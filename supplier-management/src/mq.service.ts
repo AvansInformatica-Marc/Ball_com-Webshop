@@ -1,9 +1,9 @@
 import { RabbitSubscribe } from "@golevelup/nestjs-rabbitmq";
 import { Injectable } from "@nestjs/common";
 import { validate } from "class-validator";
-import { validationOptions } from "./app.constants";
-import { Event } from "./command/event.entity";
-import { SupplierEvent } from "./command/supplier-event.entity";
+import { MQ_EXCHANGE, MQ_ROUTING_KEY, constructFromObjects, validationOptions } from "./app.constants";
+import { Event } from "./command/db/event.entity";
+import { SupplierEvent } from "./command/db/supplier-event.entity";
 import { Supplier } from "./query/supplier.entity";
 import { SupplierService } from "./query/supplier.service";
 
@@ -14,47 +14,38 @@ export class MqService {
     ) {}
 
     @RabbitSubscribe({
-        exchange: 'ball',
-        routingKey: '',
+        exchange: MQ_EXCHANGE,
+        routingKey: MQ_ROUTING_KEY,
         queue: 'supplier',
     })
     async onMessage(message: { event: Event, [key: string]: any }) {
         switch (message.event.eventName) {
             case "SupplierCreated": {
-                const event = new SupplierEvent()
-                Object.assign(event, message)
-                validate(event, validationOptions)
-                await this.onSupplierCreated(event)
+                await this.onSupplierCreated(this.createSupplierEventFromMessage(message))
                 break
             }
             case "SupplierUpdated": {
-                const event = new SupplierEvent()
-                Object.assign(event, message)
-                validate(event, validationOptions)
-                await this.onSupplierUpdated(event)
+                await this.onSupplierUpdated(this.createSupplierEventFromMessage(message))
                 break
             }
             case "SupplierDeleted": {
-                const event = new SupplierEvent()
-                Object.assign(event, message)
-                validate(event, validationOptions)
-                await this.onSupplierRemoved(event)
+                await this.onSupplierRemoved(this.createSupplierEventFromMessage(message))
                 break
             }
         }
     }
 
+    private createSupplierEventFromMessage(message: { [key: string]: any }): SupplierEvent {
+        return constructFromObjects(SupplierEvent, message)
+    }
+
     async onSupplierCreated(supplierEvent: SupplierEvent) {
-        const supplier = new Supplier()
-        Object.assign(supplier, supplierEvent)
-        validate(supplier, validationOptions)
+        const supplier = constructFromObjects(Supplier, supplierEvent)
         await this.supplierService.create(supplier)
     }
 
     async onSupplierUpdated(supplierEvent: SupplierEvent) {
-        const supplier = new Supplier()
-        Object.assign(supplier, supplierEvent)
-        validate(supplier, validationOptions)
+        const supplier = constructFromObjects(Supplier, supplierEvent)
         await this.supplierService.update(supplierEvent.supplierId, supplier)
     }
 

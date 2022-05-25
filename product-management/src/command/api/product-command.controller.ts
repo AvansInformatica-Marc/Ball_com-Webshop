@@ -1,11 +1,10 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, ParseUUIDPipe, Post, Put, ValidationPipe } from '@nestjs/common'
 import { ApiBadRequestResponse, ApiCreatedResponse, ApiNoContentResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { ProductCreateDto } from './product-create.dto'
-import { ProductEventService } from './product-event.service'
+import { ProductEventService } from '../db/product-event.service'
 import * as crypto from "node:crypto"
-import { validationOptions } from 'src/app.constants'
-import { validate } from 'class-validator'
-import { ProductEvent } from './product-event.entity'
+import { constructFromObjects, validationOptions } from 'src/app.constants'
+import { ProductEvent } from '../db/product-event.entity'
 import { Product } from 'src/query/product.entity'
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq'
 
@@ -47,10 +46,7 @@ export class ProductCommandController {
         const createdEvent = await this.productEventService.insert(event)
         await this.amqpConnection.publish("ball", "", createdEvent)
 
-        const product = new Product()
-        Object.assign(product, productCreateDto, createdEvent)
-        validate(product, validationOptions)
-        return product
+        return constructFromObjects(Product, productCreateDto, createdEvent)
     }
 
     @Put(":productId")

@@ -2,10 +2,10 @@ import { Body, Controller, Delete, Get, HttpCode, Param, ParseUUIDPipe, Post, Pu
 import { ApiBadRequestResponse, ApiCreatedResponse, ApiNoContentResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { Supplier } from 'src/query/supplier.entity'
 import { SupplierCreateDto } from './supplier-create.dto'
-import { SupplierEvent } from '../supplier-event.entity'
+import { SupplierEvent } from '../db/supplier-event.entity'
 import { SupplierEventService } from '../db/supplier-event.service'
 import * as crypto from "node:crypto"
-import { validationOptions } from 'src/app.constants'
+import { constructFromObjects, validationOptions } from 'src/app.constants'
 import { validate } from 'class-validator'
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq'
 
@@ -48,10 +48,7 @@ export class SupplierCommandController {
         event.event = createdEvent.event
         await this.amqpConnection.publish("ball", "", event)
 
-        const supplier = new Supplier()
-        Object.assign(supplier, supplierCreateDto, event)
-        validate(supplier, validationOptions)
-        return supplier
+        return constructFromObjects(Supplier, supplierCreateDto, event)
     }
 
     @Put(":supplierId")

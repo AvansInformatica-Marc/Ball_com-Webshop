@@ -1,7 +1,7 @@
 import { Controller, Get, NotFoundException, Param, ParseUUIDPipe } from '@nestjs/common'
 import { ApiBadRequestResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import { Product } from './product.entity'
-import { ProductService } from './product.service'
+import { Product } from '../product.entity'
+import { ProductService } from '../db/product.service'
 
 @ApiTags("product query")
 @Controller({

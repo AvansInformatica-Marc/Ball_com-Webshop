@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { Supplier } from './query/supplier.entity'
 import { ProductModule } from './product.module'
 import { Product } from './query/product.entity'
-import { ProductEvent } from './command/product-event.entity'
+import { ProductEvent } from './command/db/product-event.entity'
 
 @Module({
     imports: [

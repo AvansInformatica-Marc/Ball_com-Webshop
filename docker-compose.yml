@@ -43,6 +43,7 @@ services:
       - POSTGRES_PASSWORD=@dministrat0r!
       - POSTGRES_DB=supplier
       - MQ_URL=amqp://admin:%40dministrat0r%21@ball_rabbitmq:5672
+      - MQ_EXCHANGE=ball
     depends_on:
       - ball_rabbitmq
       - supplier_management_db
@@ -74,6 +75,7 @@ services:
       - POSTGRES_PASSWORD=@dministrat0r!
       - POSTGRES_DB=product
       - MQ_URL=amqp://admin:%40dministrat0r%21@ball_rabbitmq:5672
+      - MQ_EXCHANGE=ball
     depends_on:
       - ball_rabbitmq
       - product_management_db

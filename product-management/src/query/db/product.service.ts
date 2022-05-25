@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common"
 import { InjectRepository } from "@nestjs/typeorm"
 import { Repository } from "typeorm"
-import { Product } from "./product.entity"
+import { Product } from "../product.entity"
 
 @Injectable()
 export class ProductService {
@@ -30,5 +30,9 @@ export class ProductService {
 
     async delete(productId: string): Promise<void> {
         await this.productRepository.delete(productId)
+    }
+
+    async deleteAllFromSupplier(supplierId: string): Promise<void> {
+        await this.productRepository.delete({ supplier: { supplierId } })
     }
 }
