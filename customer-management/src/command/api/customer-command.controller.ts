@@ -1,12 +1,11 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, ParseUUIDPipe, Post, Put, ValidationPipe } from '@nestjs/common'
-import { ApiBadRequestResponse, ApiCreatedResponse, ApiNoContentResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { ApiBadRequestResponse, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { Customer } from 'src/query/customer.entity'
 import { CustomerCreateDto } from './customer-create.dto'
 import { CustomerEvent } from '../db/customer-event.entity'
 import { CustomerEventService } from '../db/customer-event.service'
 import * as crypto from "node:crypto"
 import { constructFromObjects, validationOptions } from 'src/app.constants'
-import { validate } from 'class-validator'
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq'
 
 @ApiTags("customer command")
@@ -19,19 +18,6 @@ export class CustomerCommandController {
         private readonly customerEventService: CustomerEventService,
         private readonly amqpConnection: AmqpConnection
     ) {}
-
-    /**
-     * Get all events linked to a customer. For debugging purposes only.
-     */
-    @Get("events/:customerId")
-    @ApiNotFoundResponse()
-    @ApiBadRequestResponse()
-    @ApiOkResponse({ type: [CustomerEvent] })
-    async getEventsForCustomer(
-        @Param("customerId", new ParseUUIDPipe()) customerId: string
-    ): Promise<CustomerEvent[]> {
-        return this.customerEventService.findEventsForCustomer(customerId)
-    }
 
     @Post()
     @ApiCreatedResponse({ type: Customer })

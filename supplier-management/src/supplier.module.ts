@@ -9,6 +9,7 @@ import { SupplierQueryController } from './query/supplier-query.controller'
 import { Supplier } from './query/supplier.entity'
 import { SupplierService } from './query/supplier.service'
 import { MQ_EXCHANGE } from './app.constants'
+import { EventStoreController } from './event-store.controller'
 
 @Module({
     imports: [
@@ -26,7 +27,7 @@ import { MQ_EXCHANGE } from './app.constants'
         }),
         TypeOrmModule.forFeature([Supplier, SupplierEvent])
     ],
-    controllers: [SupplierQueryController, SupplierCommandController],
+    controllers: [SupplierQueryController, SupplierCommandController, EventStoreController],
     providers: [SupplierService, SupplierEventService, MqService]
 })
 export class SupplierModule {}

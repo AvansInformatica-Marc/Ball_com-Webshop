@@ -9,6 +9,7 @@ import { CustomerQueryController } from './query/customer-query.controller'
 import { Customer } from './query/customer.entity'
 import { CustomerService } from './query/customer.service'
 import { MQ_EXCHANGE } from './app.constants'
+import { EventStoreController } from './event-store.controller'
 
 @Module({
     imports: [
@@ -26,7 +27,7 @@ import { MQ_EXCHANGE } from './app.constants'
         }),
         TypeOrmModule.forFeature([Customer, CustomerEvent])
     ],
-    controllers: [CustomerQueryController, CustomerCommandController],
+    controllers: [CustomerQueryController, CustomerCommandController, EventStoreController],
     providers: [CustomerService, CustomerEventService, MqService]
 })
 export class CustomerModule {}

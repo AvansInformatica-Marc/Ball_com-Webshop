@@ -1,12 +1,11 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, ParseUUIDPipe, Post, Put, ValidationPipe } from '@nestjs/common'
-import { ApiBadRequestResponse, ApiCreatedResponse, ApiNoContentResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { Body, Controller, Delete, HttpCode, Param, ParseUUIDPipe, Post, Put, ValidationPipe } from '@nestjs/common'
+import { ApiBadRequestResponse, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { Supplier } from 'src/query/supplier.entity'
 import { SupplierCreateDto } from './supplier-create.dto'
 import { SupplierEvent } from '../db/supplier-event.entity'
 import { SupplierEventService } from '../db/supplier-event.service'
 import * as crypto from "node:crypto"
 import { constructFromObjects, validationOptions } from 'src/app.constants'
-import { validate } from 'class-validator'
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq'
 
 @ApiTags("supplier command")
@@ -19,19 +18,6 @@ export class SupplierCommandController {
         private readonly supplierEventService: SupplierEventService,
         private readonly amqpConnection: AmqpConnection
     ) {}
-
-    /**
-     * Get all events linked to a supplier. For debugging purposes only.
-     */
-    @Get("events/:supplierId")
-    @ApiNotFoundResponse()
-    @ApiBadRequestResponse()
-    @ApiOkResponse({ type: [SupplierEvent] })
-    async getEventsForSupplier(
-        @Param("supplierId", new ParseUUIDPipe()) id: string
-    ): Promise<SupplierEvent[]> {
-        return this.supplierEventService.findEventsForSupplier(id)
-    }
 
     @Post()
     @ApiCreatedResponse({ type: Supplier })
@@ -89,9 +75,7 @@ export class SupplierCommandController {
 
     private removeNullsFromDatabase(objectFromDatabase: { [key: string]: any }) {
         for (const key in objectFromDatabase) {
-            if (objectFromDatabase[key] == null) {
-                objectFromDatabase[key] = undefined
-            }
+            objectFromDatabase[key] ??= undefined
         }
     }
 }

@@ -27,6 +27,7 @@ async function bootstrap() {
         .setVersion('1')
         .addTag("customer query")
         .addTag("customer command")
+        .addTag("customer event store")
         .build();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('', app, document);

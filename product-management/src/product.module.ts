@@ -11,6 +11,7 @@ import { SupplierService } from './query/db/supplier.service'
 import { ProductEvent } from './command/db/product-event.entity'
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq'
 import { MQ_EXCHANGE } from './app.constants'
+import { EventStoreController } from './event-store.controller'
 
 @Module({
     imports: [
@@ -28,7 +29,7 @@ import { MQ_EXCHANGE } from './app.constants'
         }),
         TypeOrmModule.forFeature([Product, ProductEvent, Supplier])
     ],
-    controllers: [ProductQueryController, ProductCommandController],
+    controllers: [ProductQueryController, ProductCommandController, EventStoreController],
     providers: [ProductService, SupplierService, ProductEventService, MqService]
 })
 export class ProductModule {}

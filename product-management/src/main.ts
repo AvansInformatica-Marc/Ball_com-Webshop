@@ -27,6 +27,7 @@ async function bootstrap() {
         .setVersion('1')
         .addTag("product query")
         .addTag("product command")
+        .addTag("product event store")
         .build()
     const document = SwaggerModule.createDocument(app, config)
     SwaggerModule.setup('', app, document)

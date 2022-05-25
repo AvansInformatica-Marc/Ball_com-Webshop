@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, ParseUUIDPipe, Post, Put, ValidationPipe } from '@nestjs/common'
-import { ApiBadRequestResponse, ApiCreatedResponse, ApiNoContentResponse, ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { Body, Controller, Delete, HttpCode, Param, ParseUUIDPipe, Post, Put, ValidationPipe } from '@nestjs/common'
+import { ApiBadRequestResponse, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { ProductCreateDto } from './product-create.dto'
 import { ProductEventService } from '../db/product-event.service'
 import * as crypto from "node:crypto"
@@ -18,19 +18,6 @@ export class ProductCommandController {
         private readonly productEventService: ProductEventService,
         private readonly amqpConnection: AmqpConnection
     ) {}
-
-    /**
-     * Get all events linked to a product. For debugging purposes only.
-     */
-    @Get("events/:productId")
-    @ApiNotFoundResponse()
-    @ApiBadRequestResponse()
-    @ApiOkResponse({ type: [ProductEvent] })
-    async getEventsForProduct(
-        @Param("productId", new ParseUUIDPipe()) productId: string
-    ): Promise<ProductEvent[]> {
-        return this.productEventService.findEventsForProduct(productId)
-    }
 
     @Post()
     @ApiCreatedResponse({ type: Product })
@@ -87,9 +74,7 @@ export class ProductCommandController {
 
     private removeNullsFromDatabase(objectFromDatabase: { [key: string]: any }) {
         for (const key in objectFromDatabase) {
-            if (objectFromDatabase[key] == null) {
-                objectFromDatabase[key] = undefined
-            }
+            objectFromDatabase[key] ??= undefined
         }
     }
 }

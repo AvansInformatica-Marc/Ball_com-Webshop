@@ -27,6 +27,7 @@ async function bootstrap() {
         .setVersion('1')
         .addTag("supplier query")
         .addTag("supplier command")
+        .addTag("supplier event store")
         .build();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('', app, document);
