@@ -1,27 +1,28 @@
 import { Module } from '@nestjs/common'
-import { ClientsModule, Transport } from '@nestjs/microservices'
+import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { supplierMqOptions } from './app.constants'
-import { SupplierCommandController } from './command/supplier-command.controller'
+import { SupplierCommandController } from './command/api/supplier-command.controller'
 import { SupplierEvent } from './command/supplier-event.entity'
-import { SupplierEventService } from './command/supplier-event.service'
-import { MqController } from './mq.controller'
+import { SupplierEventService } from './command/db/supplier-event.service'
+import { MqService } from './mq.service'
 import { SupplierQueryController } from './query/supplier-query.controller'
 import { Supplier } from './query/supplier.entity'
 import { SupplierService } from './query/supplier.service'
 
 @Module({
     imports: [
-        ClientsModule.register([
-            {
-                name: "SUPPLIER_SERVICE",
-                transport: Transport.RMQ,
-                options: supplierMqOptions,
-            }
-        ]),
+        RabbitMQModule.forRoot(RabbitMQModule, {
+            exchanges: [
+                {
+                    name: "ball",
+                    type: "fanout"
+                }
+            ],
+            uri: process.env["MQ_URL"]!
+        }),
         TypeOrmModule.forFeature([Supplier, SupplierEvent])
     ],
-    controllers: [SupplierQueryController, SupplierCommandController, MqController],
-    providers: [SupplierService, SupplierEventService]
+    controllers: [SupplierQueryController, SupplierCommandController],
+    providers: [SupplierService, SupplierEventService, MqService]
 })
 export class SupplierModule {}

@@ -16,6 +16,7 @@ services:
       - RABBITMQ_DEFAULT_USER=admin
       - RABBITMQ_DEFAULT_PASS=@dministrat0r!
 
+  ### SUPPLIERS ###
   supplier_management_db:
     image: postgres:14-alpine
     container_name: 'supplier_management_db'
@@ -46,6 +47,38 @@ services:
       - ball_rabbitmq
       - supplier_management_db
 
+  ### PRODUCTS ###
+  product_management_db:
+    image: postgres:14-alpine
+    container_name: 'product_management_db'
+    restart: on-failure
+    ports:
+      - '5433:5432'
+    volumes:
+      - product_management_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=@dministrat0r!
+      - POSTGRES_DB=product
+
+  product_management_service:
+    image: ball/product_management_service:1.0
+    build: product-management
+    restart: on-failure
+    ports:
+      - '3100:3000'
+    environment:
+      - POSTGRES_HOST=product_management_db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=@dministrat0r!
+      - POSTGRES_DB=product
+      - MQ_URL=amqp://admin:%40dministrat0r%21@ball_rabbitmq:5672
+    depends_on:
+      - ball_rabbitmq
+      - product_management_db
+
 volumes:
   supplier_management_data:
+  product_management_data:
   rabbitmq_data:

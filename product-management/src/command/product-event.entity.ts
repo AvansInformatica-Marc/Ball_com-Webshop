@@ -1,10 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger"
-import { IsBoolean, IsOptional, IsString, IsUUID, ValidateNested } from "class-validator"
+import { IsNumber, IsOptional, IsString, IsUUID, ValidateNested } from "class-validator"
 import { Column, Entity } from "typeorm"
 import { Event } from "./event.entity"
 
 @Entity()
-export class SupplierEvent {
+export class ProductEvent {
     @ValidateNested()
     @ApiProperty()
     @Column(() => Event)
@@ -13,28 +13,35 @@ export class SupplierEvent {
     @Column("uuid")
     @IsUUID()
     @ApiProperty()
-    supplierId: string
+    productId: string
 
-    @Column({ nullable: true })
     @IsString()
     @IsOptional()
     @ApiPropertyOptional()
+    @Column({ nullable: true })
     name?: string
 
-    @Column({ nullable: true })
     @IsString()
     @IsOptional()
     @ApiPropertyOptional()
-    address?: string
-
     @Column({ nullable: true })
-    @IsString()
+    description?: string
+
+    @IsNumber()
     @IsOptional()
     @ApiPropertyOptional()
-    city?: string
+    @Column({ nullable: true, type: "double precision" })
+    price?: number
 
-    @Column({ default: true })
-    @IsBoolean()
-    @ApiProperty()
-    isActive: boolean = true
+    @IsUUID()
+    @IsOptional()
+    @ApiPropertyOptional()
+    @Column({ nullable: true })
+    supplierId?: string
+
+    @IsNumber()
+    @IsOptional()
+    @ApiPropertyOptional()
+    @Column({ nullable: true })
+    stock?: number
 }
