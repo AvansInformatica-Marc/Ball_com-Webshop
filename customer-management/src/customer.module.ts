@@ -21,9 +21,7 @@ import { EventStoreController } from './event-store.controller'
                 }
             ],
             uri: process.env["MQ_URL"]!,
-            connectionInitOptions: {
-                timeout: 10000
-            }
+            connectionInitOptions: { wait: false }
         }),
         TypeOrmModule.forFeature([Customer, CustomerEvent])
     ],
