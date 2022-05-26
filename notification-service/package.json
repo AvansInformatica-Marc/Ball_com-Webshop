@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "prebuild": "rimraf dist",
     "build": "tsc",
     "start": "tsc && node dist/main",
     "start:prod": "node dist/main",
