@@ -106,6 +106,28 @@ services:
       - ball_rabbitmq
       - customer_management_db
 
+  ### E-MAIL NOTIFICATIONS ###
+  mailserver:
+    image: maildev/maildev:latest
+    container_name: mailserver
+    restart: on-failure
+    ports:
+      - "3300:1080"
+
+  notification_service:
+    image: ball/notification_service:1.0
+    build: notification-service
+    restart: on-failure
+    environment:
+      - MAIL_HOST=mailserver
+      - MAIL_PORT=1025
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - MQ_URL=amqp://admin:%40dministrat0r%21@ball_rabbitmq:5672
+      - MQ_EXCHANGE=ball
+    depends_on:
+      - ball_rabbitmq
+      - mailserver
+
 volumes:
   supplier_management_data:
   product_management_data:
