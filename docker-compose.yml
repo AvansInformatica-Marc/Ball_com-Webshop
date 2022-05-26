@@ -16,12 +16,11 @@ services:
       - RABBITMQ_DEFAULT_USER=admin
       - RABBITMQ_DEFAULT_PASS=@dministrat0r!
 
+  ### SUPPLIERS ###
   supplier_management_db:
     image: postgres:14-alpine
     container_name: 'supplier_management_db'
     restart: on-failure
-    ports:
-      - '5432:5432'
     volumes:
       - supplier_management_data:/var/lib/postgresql/data
     environment:
@@ -42,10 +41,95 @@ services:
       - POSTGRES_PASSWORD=@dministrat0r!
       - POSTGRES_DB=supplier
       - MQ_URL=amqp://admin:%40dministrat0r%21@ball_rabbitmq:5672
+      - MQ_EXCHANGE=ball
     depends_on:
       - ball_rabbitmq
       - supplier_management_db
 
+  ### PRODUCTS ###
+  product_management_db:
+    image: postgres:14-alpine
+    container_name: 'product_management_db'
+    restart: on-failure
+    volumes:
+      - product_management_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=@dministrat0r!
+      - POSTGRES_DB=product
+
+  product_management_service:
+    image: ball/product_management_service:1.0
+    build: product-management
+    restart: on-failure
+    ports:
+      - '3100:3000'
+    environment:
+      - POSTGRES_HOST=product_management_db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=@dministrat0r!
+      - POSTGRES_DB=product
+      - MQ_URL=amqp://admin:%40dministrat0r%21@ball_rabbitmq:5672
+      - MQ_EXCHANGE=ball
+    depends_on:
+      - ball_rabbitmq
+      - product_management_db
+
+  ### CUSTOMERS ###
+  customer_management_db:
+    image: postgres:14-alpine
+    container_name: 'customer_management_db'
+    restart: on-failure
+    volumes:
+      - customer_management_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=@dministrat0r!
+      - POSTGRES_DB=customer
+
+  customer_management_service:
+    image: ball/customer_management_service:1.0
+    build: customer-management
+    restart: on-failure
+    ports:
+      - '3200:3000'
+    environment:
+      - POSTGRES_HOST=customer_management_db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=@dministrat0r!
+      - POSTGRES_DB=customer
+      - MQ_URL=amqp://admin:%40dministrat0r%21@ball_rabbitmq:5672
+      - MQ_EXCHANGE=ball
+    depends_on:
+      - ball_rabbitmq
+      - customer_management_db
+
+  ### E-MAIL NOTIFICATIONS ###
+  mailserver:
+    image: maildev/maildev:latest
+    container_name: mailserver
+    restart: on-failure
+    ports:
+      - "3300:1080"
+
+  notification_service:
+    image: ball/notification_service:1.0
+    build: notification-service
+    restart: on-failure
+    environment:
+      - MAIL_HOST=mailserver
+      - MAIL_PORT=1025
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - MQ_URL=amqp://admin:%40dministrat0r%21@ball_rabbitmq:5672
+      - MQ_EXCHANGE=ball
+    depends_on:
+      - ball_rabbitmq
+      - mailserver
+
 volumes:
   supplier_management_data:
+  product_management_data:
+  customer_management_data:
   rabbitmq_data:

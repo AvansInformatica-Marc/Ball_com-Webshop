@@ -22,12 +22,12 @@ async function bootstrap() {
     app.use(helmet())
 
     const config = new DocumentBuilder()
-        .setTitle('Supplier management')
-        .setDescription('The supplier management API')
+        .setTitle('Customer management')
+        .setDescription('The customer management API')
         .setVersion('1')
-        .addTag("supplier query")
-        .addTag("supplier command")
-        .addTag("supplier event store")
+        .addTag("customer query")
+        .addTag("customer command")
+        .addTag("customer event store")
         .build();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('', app, document);

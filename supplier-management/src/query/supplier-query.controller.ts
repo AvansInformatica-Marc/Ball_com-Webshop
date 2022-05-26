@@ -17,12 +17,14 @@ export class SupplierQueryController {
         return this.supplierService.findAll()
     }
 
-    @Get(":id")
+    @Get(":supplierId")
     @ApiNotFoundResponse()
     @ApiOkResponse({ type: Supplier })
     @ApiBadRequestResponse()
-    async getSupplierById(@Param("id", new ParseUUIDPipe()) id: string): Promise<Supplier> {
-        const supplier = await this.supplierService.findOne(id)
+    async getSupplierById(
+        @Param("supplierId", new ParseUUIDPipe()) supplierId: string
+    ): Promise<Supplier> {
+        const supplier = await this.supplierService.findOne(supplierId)
 
         if (supplier == undefined) {
             throw new NotFoundException()

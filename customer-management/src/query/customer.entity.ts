@@ -1,13 +1,13 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
-import { ApiProperty } from "@nestjs/swagger"
-import { IsBoolean, IsString, IsUUID } from "class-validator"
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger"
+import { IsBoolean, IsEmail, IsOptional, IsPhoneNumber, IsString, IsUUID } from "class-validator"
 
 @Entity()
-export class Supplier {
+export class Customer {
     @IsUUID()
     @ApiProperty()
     @PrimaryGeneratedColumn("uuid")
-    supplierId: string
+    customerId: string
 
     @IsString()
     @ApiProperty()
@@ -23,6 +23,17 @@ export class Supplier {
     @ApiProperty()
     @Column()
     city: string
+
+    @IsEmail()
+    @ApiProperty()
+    @Column()
+    email: string
+
+    @IsPhoneNumber()
+    @IsOptional()
+    @ApiPropertyOptional()
+    @Column({ nullable: true })
+    phonenumber?: string
 
     @IsBoolean()
     @ApiProperty()

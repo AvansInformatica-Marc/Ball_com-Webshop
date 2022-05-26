@@ -10,10 +10,8 @@ export class SupplierEventService {
         private supplierEventStore: Repository<SupplierEvent>
     ) {}
 
-    findEventsForSupplier(id: string): Promise<SupplierEvent[]> {
-        return this.supplierEventStore.find({
-            supplierId: id
-        })
+    findEventsForSupplier(supplierId: string): Promise<SupplierEvent[]> {
+        return this.supplierEventStore.find({ supplierId })
     }
 
     insert(supplierEvent: SupplierEvent): Promise<SupplierEvent> {

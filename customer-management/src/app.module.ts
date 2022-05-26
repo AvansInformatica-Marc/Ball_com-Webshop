@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { SupplierEvent } from './command/db/supplier-event.entity'
-import { Supplier } from './query/supplier.entity'
-import { SupplierModule } from './supplier.module'
+import { CustomerEvent } from './command/db/customer-event.entity'
+import { Customer } from './query/customer.entity'
+import { CustomerModule } from './customer.module'
 
 @Module({
     imports: [
@@ -13,10 +13,10 @@ import { SupplierModule } from './supplier.module'
             username: process.env["POSTGRES_USER"],
             password: process.env["POSTGRES_PASSWORD"],
             database: process.env["POSTGRES_DB"],
-            entities: [Supplier, SupplierEvent],
+            entities: [Customer, CustomerEvent],
             synchronize: true
         }),
-        SupplierModule
+        CustomerModule
     ]
 })
 export class AppModule {}

@@ -22,15 +22,15 @@ async function bootstrap() {
     app.use(helmet())
 
     const config = new DocumentBuilder()
-        .setTitle('Supplier management')
-        .setDescription('The supplier management API')
+        .setTitle('Product management')
+        .setDescription('The product management API')
         .setVersion('1')
-        .addTag("supplier query")
-        .addTag("supplier command")
-        .addTag("supplier event store")
-        .build();
-    const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('', app, document);
+        .addTag("product query")
+        .addTag("product command")
+        .addTag("product event store")
+        .build()
+    const document = SwaggerModule.createDocument(app, config)
+    SwaggerModule.setup('', app, document)
 
     await app.listen(3000)
 }

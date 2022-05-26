@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
 import { ApiProperty } from "@nestjs/swagger"
-import { IsBoolean, IsString, IsUUID } from "class-validator"
+import { IsString, IsUUID } from "class-validator"
 
 @Entity()
 export class Supplier {
@@ -13,19 +13,4 @@ export class Supplier {
     @ApiProperty()
     @Column()
     name: string
-
-    @IsString()
-    @ApiProperty()
-    @Column()
-    address: string
-
-    @IsString()
-    @ApiProperty()
-    @Column()
-    city: string
-
-    @IsBoolean()
-    @ApiProperty()
-    @Column({ default: true })
-    isActive: boolean = true
 }
