@@ -128,6 +128,113 @@ services:
       - ball_rabbitmq
       - mailserver
 
+#  ### Logistics Management ###
+#  ball_logistics_management_db:
+#    image: 'mongo'
+#    container_name: 'ball_logistics_management_db'
+#    ports:
+#      - '27012:27017'
+#    volumes:
+#      - ./conf/mongod.conf:/etc/mongod.conf
+#    command: ["-f", "/etc/mongod.conf"]
+#
+#  ball_logistics_management_service:
+#    build: LogisticsManagementService/.
+#    container_name: 'ball_logistics_management_service'
+#    ports:
+#      - '8082:8080'
+#    environment:
+#      - MONGO_URL=mongodb://mongo:27012/app_development
+#    depends_on:
+#      - ball_rabbitmq
+#      - ball_logistics_management_db
+#
+#      ### Order Management ###
+#  ball_order_management_db:
+#    image: 'mongo'
+#    container_name: 'ball_order_management_db'
+#    ports:
+#      - '27014:27017'
+#    volumes:
+#      - ./conf/mongod.conf:/etc/mongod.conf
+#    command: ["-f", "/etc/mongod.conf"]
+#
+#  ball_order_management_service:
+#    build: OrderManagementService/.
+#    container_name: 'ball_order_management_service'
+#    ports:
+#      - '8084:8080'
+#    environment:
+#      - MONGO_URL=mongodb://ball_order_management_db:27017/app_development
+#      - MQ_URL=amqp://ball_rabbitmq:5672
+#    depends_on:
+#      - ball_rabbitmq
+#      - ball_order_management_db
+#
+#  ### Order Tracking ###
+#  ball_order_tracking_db:
+#    image: 'mongo'
+#    container_name: 'ball_order_tracking_db'
+#    ports:
+#      - '27015:27017'
+#    volumes:
+#      - ./conf/mongod.conf:/etc/mongod.conf
+#    command: ["-f", "/etc/mongod.conf"]
+#
+#  ball_order_tracking_service:
+#    build: OrderTrackingService/.
+#    container_name: 'ball_order_tracking_service'
+#    ports:
+#      - '8085:8080'
+#    environment:
+#      - MONGO_URL=mongodb://mongo:27015/app_development
+#    depends_on:
+#      - ball_rabbitmq
+#      - ball_order_tracking_db
+#
+#  ### Payment ###
+#  ball_payment_db:
+#    image: 'mongo'
+#    container_name: 'ball_payment_db'
+#    ports:
+#      - '27016:27017'
+#    volumes:
+#      - ./conf/mongod.conf:/etc/mongod.conf
+#    command: ["-f", "/etc/mongod.conf"]
+#
+#  ball_payment_service:
+#    build: PaymentService/.
+#    container_name: 'ball_payment_service'
+#    ports:
+#      - '8086:8080'
+#    environment:
+#      - MONGO_URL=mongodb://ball_payment_db:27017/app_development
+#      - MQ_URL=amqp://ball_rabbitmq:5672
+#    depends_on:
+#      - ball_rabbitmq
+#      - ball_payment_db
+#
+#  ### Service Department ###
+#  ball_service_department_db:
+#    image: 'mongo'
+#    container_name: 'ball_service_department_db'
+#    ports:
+#      - '27018:27017'
+#    volumes:
+#      - ./conf/mongod.conf:/etc/mongod.conf
+#    command: ["-f", "/etc/mongod.conf"]
+#
+#  ball_service_department_service:
+#    build: ServiceDepartmentService/.
+#    container_name: 'ball_service_department_service'
+#    ports:
+#      - '8088:8080'
+#    environment:
+#      - MONGO_URL=mongodb://mongo:27018/app_development
+#    depends_on:
+#      - ball_rabbitmq
+#      - ball_service_department_db
+
 volumes:
   supplier_management_data:
   product_management_data:

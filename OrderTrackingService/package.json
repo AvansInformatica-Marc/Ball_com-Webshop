@@ -1,0 +1,12 @@
+{
+  "name": "ball_order_tracking_service",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "preinstall": "yarn global add nodemon"
+  },
+  "dependencies": {
+    "nodemon": "^2.0.3"
+  }
+}
